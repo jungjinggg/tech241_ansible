@@ -65,7 +65,8 @@ Ansible is a configuration tool that orchestrates the entire application environ
     sudo ansible web -m ping
     ```
 ### If setup correctly, should be able to see the status
-This means if the hosts respond successfully, Ansible will display a success message indicating that the hosts are reachable
+This means if the hosts respond successfully, Ansible will display a success message indicating that the hosts are reachable.
+
 ![ping status result](images/ping_status.png)
 
 ## On App and DB VM terminals
