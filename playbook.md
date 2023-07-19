@@ -11,7 +11,7 @@
 - list contents of pwd
     ```sudo ansible web -a "ls -a"```
 
-## Insatll Nginx
+## Install Nginx
 
 ```yaml
 # YAML file start --- three dashes
