@@ -1,15 +1,25 @@
 ## Adhoc commands
+Adhoc commands allow to run simple tasks or commands on remote hosts without the need to write a full playbook.
+
 - Check system info
-    ```sudo ansible web -a "uname -a"```
+    ```
+    sudo ansible web -a "uname -a"
+    ```
 
 - Check the system date
-    ```sudo ansible web -a "date"```
+    ```
+    sudo ansible web -a "date"
+    ```
 
 - Check RAM
-    ```sudo ansible web -a "free"```
+    ```
+    sudo ansible web -a "free"
+    ```
 
 - list contents of pwd
-    ```sudo ansible web -a "ls -a"```
+    ```
+    sudo ansible web -a "ls -a"
+    ```
 
 ## Install Nginx
 
@@ -94,22 +104,23 @@
       state: present
       update_cache: yes
 
-#  - name: Install PM2
-#    npm:
-#      name: pm2
-#      global: yes
-#      state: present
+  - name: Install PM2
+    npm:
+      name: pm2
+      global: yes
+      state: present
+      version: "4.5.6"
 
   - name: Install app dependencies
     command: npm install
     args:
       chdir: /home/ubuntu/app/app/
 
-#  - name: Stop PM2 processes
-#    shell: pm2 kill
+  - name: Stop PM2 processes
+    shell: pm2 kill
 
   - name: Start the Node.js app
-    shell: npm start
+    shell: pm2 start app.js
     args:
       chdir: /home/ubuntu/app/app
 ```
