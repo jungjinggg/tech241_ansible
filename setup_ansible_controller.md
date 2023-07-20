@@ -73,3 +73,4 @@ This means if the hosts respond successfully, Ansible will display a success mes
 1) sudo apt update -y
 2) sudo apt upgrade -y
 
+

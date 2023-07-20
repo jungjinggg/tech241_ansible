@@ -164,6 +164,101 @@ sudo ansible-playbook mongodb-playbook.yml -vvv
 
 # check the status if its running with adhoc commands
 
+# add steps to make required changes to mongod.conf to change ip
+  - name: Modify mongod.conf to change bindIp
+    lineinfile:
+      path: /etc/mongodb.conf
+      regexp: '^bind_ip'
+      line: 'bind_ip = 0.0.0.0'
+
+# restart mongodb
+  - name: Restart MongoDB service
+    service:
+      name: mongodb
+      state: restarted
+
+# enable mongodb
+  - name: Enable mongod service
+    service:
+      name: mongodb
+      state: started
+      enabled: yes
+```
+
+### Full Node.js playbook after installing mongodb
+```yaml
+---
+# which host to perform
+- hosts: web
+
+# see the log by gathering facts
+#  gathering_facts: yes
+
+# admin access
+  become: true
+
+# install nodejs
+  tasks:
+  # add the instructions  -  install node 12 with pm2 and run the app
+  - name: Installing node v 12the gog key for nodejs
+    apt_key:
+      url: "https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+      state: present
+  
+  - name: Add NodeSource repository
+    apt_repository:
+      repo: "deb https://deb.nodesource.com/node_12.x {{ ansible_distribution_release }} main"
+      state: present
+  
+  # Clone the app 
+  - name: Clone the Git repository
+    git:
+      repo: https://github.com/jungjinggg/tech241_sparta_app.git
+      dest: /home/ubuntu/app
+  
+  # Set env var of HOST_DB
+  - name: Add DB_HOST to /etc/environment
+    lineinfile:
+      path: /etc/environment
+      line: 'DB_HOST="mongodb://172.31.32.21:27017/posts"'
+  
+  # Install node.js
+  - name: Install Node.js
+    apt:
+      name: nodejs
+      state: present
+      update_cache: yes
+  
+  # Install pm2
+  - name: Install PM2
+    npm:
+      name: pm2
+      global: yes
+      state: present
+      version: "4.5.6"
+  
+  # Install npm
+  - name: Install app dependencies
+    command: npm install
+    args:
+      chdir: /home/ubuntu/app/app/
+
+  # Seeding database to fetch posts
+  - name: Seeding database
+    command: node seeds/seed.js
+    args:
+      chdir: /home/ubuntu/app/app/
+  
+  # Kill pm2
+  - name: Stop PM2 processes
+    shell: pm2 kill
+
+  # Start the app
+  - name: Start the Node.js app
+    command: pm2 start app.js
+    args:
+      chdir: /home/ubuntu/app/app
+
 ```
 To check if mongodb running using adhoc command
 ```
